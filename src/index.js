@@ -54,4 +54,8 @@ scaledData.forEach(({ x, y }) => {
 });
 
 ctx.stroke();
+
+ctx.lineTo(xMax, canvas.height);
+ctx.lineTo(0, canvas.height);
+
 ctx.fill();
