@@ -49,13 +49,39 @@ ctx.strokeStyle = COLOR_LINE;
 ctx.lineWidth = LINE_WIDTH;
 ctx.fillStyle = gradient;
 
-scaledData.forEach(({ x, y }) => {
-  ctx.lineTo(x, y);
-});
+const updateChart = data => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  data.forEach(({ x, y }, index) => {
+    ctx.lineTo(x, y);
+  });
 
-ctx.stroke();
+  ctx.stroke();
 
-ctx.lineTo(xMax, canvas.height);
-ctx.lineTo(0, canvas.height);
+  ctx.lineTo(xMax, canvas.height);
+  ctx.lineTo(0, canvas.height);
 
-ctx.fill();
+  ctx.fill();
+};
+
+// Initial draw
+updateChart(scaledData);
+
+// Animation
+const duration = 300;
+const frames = 24;
+const itervalTime = duration / frames;
+let counter = 0;
+const interval = setInterval(() => {
+  const tickData = candles.map(({ from, open }, index) => {
+    const nextTickTime = candles[index - 1]
+      ? candles[index - 1].from
+      : candles[0].from - duration;
+    const delta = from - nextTickTime;
+    const frameTime = (delta / frames) * counter;
+    return { x: (from - frameTime - xMin) * xScale, y: (open - yMin) * yScale };
+  });
+
+  requestAnimationFrame(updateChart.bind(null, tickData));
+  counter++;
+}, itervalTime);

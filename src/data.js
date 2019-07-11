@@ -1,4 +1,4 @@
-const candles = [
+let candles = [
   {
     id: 52361,
     from: 1561337100,
